@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("./config/db.config");
+const dotenv = require("dotenv");
 
 //Configuration
 var corsOptions = {
