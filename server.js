@@ -32,6 +32,9 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to DreamLearn application." });
 });
 
+require('./app/routes/auth.routes')(app);
+require('./app/routes/user.routes')(app);
+
 
 // App Listen for requests
 app.listen(PORT, () => {
