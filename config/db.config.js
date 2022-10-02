@@ -5,7 +5,7 @@ module.exports = async function expmongoose() {
     .connect(process.env.CONN)
     .then(() => {
       console.log("Successfully connected to MongoDB.");
-      //initial();
+      initial();
     })
     .catch((error) => {
       console.log("Connection error: ", error);
