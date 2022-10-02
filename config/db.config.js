@@ -1,5 +1,8 @@
 const db = require("../models");
 const Role = db.role;
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 module.exports = async function expmongoose() {
   await db.mongoose
@@ -22,16 +25,11 @@ function initial() {
       })
         .save()
         .then((result) => {
+          console.log("added 'learner' to roles collection");
           console.log(result);
-          res.status(201).json({
-            message: "learner role created",
-          });
         })
         .catch((err) => {
-          console.log(err);
-          res.status(500).json({
-            error: err,
-          });
+          console.log("error", err);
         });
 
       new Role({
@@ -39,16 +37,11 @@ function initial() {
       })
       .save()
       .then(result => {
-        console.log(result);
-        res.status(201).json({
-          message: "educator role created"
-        });
+        console.log("added 'educator' to roles collection");
+          console.log(result);
       })
       .catch(err => {
-        console.log(err);
-        res.status(500).json({
-          error: err
-        });
+        console.log("error", err);
       });
     }
   });

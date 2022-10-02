@@ -8,7 +8,7 @@ var corsOptions = {
   origin: "http://localhost:8081"
 };
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8085;
 dotenv.config();
 mongoose();
 
@@ -32,8 +32,8 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to DreamLearn application." });
 });
 
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
+require('./routes/auth.routes')(app);
+require('./routes/user.routes')(app);
 
 
 // App Listen for requests
