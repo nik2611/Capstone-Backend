@@ -32,7 +32,7 @@ isLearner = (req, res, next) => {
 
     Role.find(
       {
-        _id: { user.role }
+        _id: user.role
       },
       (err, role) => {
         if (err) {
@@ -64,7 +64,7 @@ isEducator = (req, res, next) => {
 
     Role.find(
       {
-        _id: { user.role }
+        _id: user.role
       },
       (err, role) => {
         if (err) {
