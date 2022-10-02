@@ -22,22 +22,22 @@ exports.signup = (req, res) => {
     if (req.body.role) {
       Role.find(
         {
-          name: { req.body.role }
+          name: req.body.role
         },
-        (err, roles) => {
+        (err, role) => {
           if (err) {
             res.status(500).send({ message: err });
             return;
           }
 
-          user.roles = roles.map(role => role._id);
+          user.role = role._id;
           user.save(err => {
             if (err) {
               res.status(500).send({ message: err });
               return;
             }
 
-            res.send({ message: "User was registered successfully!" });
+            res.status(200).json({ message: "User was registered successfully!" });
           });
         }
       );
@@ -52,7 +52,7 @@ exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username
   })
-    .populate("roles", "-__v")
+    .populate("role", "-__v")
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -79,16 +79,14 @@ exports.signin = (req, res) => {
         expiresIn: 1800 // 30 mins
       });
 
-      var authorities = [];
+      var authority = "ROLE_" + user.role.name.toUpperCase();
 
-      for (let i = 0; i < user.roles.length; i++) {
-        authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-      }
+      
       res.status(200).send({
         id: user._id,
         username: user.username,
         email: user.email,
-        roles: authorities,
+        role: authority,
         accessToken: token
       });
     });
