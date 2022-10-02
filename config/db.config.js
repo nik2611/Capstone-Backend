@@ -1,4 +1,5 @@
-const db = require("./models");
+const db = require("../models");
+const Role = db.role;
 
 module.exports = async function expmongoose() {
   await db.mongoose
