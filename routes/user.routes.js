@@ -10,15 +10,16 @@ module.exports = function(app) {
     next();
   });
   
+  app.get("/api/test/all", controller.allAccess);
 
   app.get(
-    "/api/test/educator",
+    "/api/authorise/educator",
     [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoard
   );
 
   app.get(
-    "/api/test/learner",
+    "/api/authorise/learner",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoard
   );
