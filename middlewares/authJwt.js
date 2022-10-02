@@ -16,6 +16,7 @@ verifyToken = (req, res, next) => {
       return res.status(401).send({ message: "Unauthorized!" });
     }
     req.userId = decoded.id;
+    console.log(req.userId);
     next();
   });
 };
@@ -27,25 +28,26 @@ isLearner = (req, res, next) => {
       return;
     }
 
+    console.log(user);
+
     Role.find(
       {
-        _id: { $in: user.roles }
+        _id: { user.role }
       },
-      (err, roles) => {
+      (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "learner") {
-            next();
-            return;
+         
+          if (role.name === "learner") {
+            return res.status(200).json({ message: "Learner Role!" });;
           }
-        }
+        
 
-        res.status(403).send({ message: "Require Learner Role!" });
-        return;
+        
+        next();
       }
     );
   });
@@ -58,25 +60,25 @@ isEducator = (req, res, next) => {
       return;
     }
 
+    console.log(user);
+
     Role.find(
       {
-        _id: { $in: user.roles }
+        _id: { user.role }
       },
-      (err, roles) => {
+      (err, role) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-        for (let i = 0; i < roles.length; i++) {
-          if (roles[i].name === "educator") {
-            next();
-            return;
+        
+          if (role.name === "educator") {
+            
+            return res.status(200).send({ message: "Educator Role!" });
           }
-        }
 
-        res.status(403).send({ message: "Require Educator Role!" });
-        return;
+        next();
       }
     );
   });
