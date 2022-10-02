@@ -9,7 +9,7 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
   })
   .exec()
   .then(user => {
-    if (user.length >= 1) {
+    if (user !== null) {
       return res.status(409).json({
         message: "Username exists"
       });
@@ -28,7 +28,7 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
     })
     .exec()
     .then(user => {
-      if (user.length >= 1) {
+      if (user !== null) {
         return res.status(409).json({
           message: "Email exists"
         });

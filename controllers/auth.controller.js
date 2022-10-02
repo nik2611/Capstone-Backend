@@ -15,9 +15,11 @@ exports.signup = (req, res) => {
 
   user.save((err, user) => {
     if (err) {
-      res.status(500).send({ message: err });
+      res.status(500).json({ message: err });
       return;
     }
+
+    console.log(user);
 
     if (req.body.role) {
       Role.find(
@@ -26,11 +28,13 @@ exports.signup = (req, res) => {
         },
         (err, role) => {
           if (err) {
-            res.status(500).send({ message: err });
+            res.status(500).json({ message: err });
             return;
           }
 
-          user.role = role._id;
+          console.log(role);
+
+          user.role = role[0]._id;
           user.save(err => {
             if (err) {
               res.status(500).send({ message: err });

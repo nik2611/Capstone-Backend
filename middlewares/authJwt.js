@@ -35,19 +35,22 @@ isLearner = (req, res, next) => {
         _id: user.role
       },
       (err, role) => {
+        
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-         
-          if (role.name === "learner") {
-            return res.status(200).json({ message: "Learner Role!" });;
+        console.log(role); 
+
+          if (role[0].name === "learner") {
+            console.log(role.name);
+            next();
+            return;
           }
         
 
-        
-        next();
+          return res.status(403).json({ message: "Learner Role Required!" });
       }
     );
   });
@@ -67,18 +70,22 @@ isEducator = (req, res, next) => {
         _id: user.role
       },
       (err, role) => {
+        
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
 
-        
-          if (role.name === "educator") {
-            
-            return res.status(200).send({ message: "Educator Role!" });
+        console.log(role);
+
+          if (role[0].name === "educator") {
+            console.log(role.name);
+            next();
+            return;
           }
 
-        next();
+          return res.status(200).json({ message: "Educator Role Required!" });
+        
       }
     );
   });
