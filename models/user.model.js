@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { user } = require(".");
 
 const User = mongoose.model(
   "User",
@@ -11,7 +12,12 @@ const User = mongoose.model(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role"
-      }
+      } 
+      // Roles: {
+      //   type: String, 
+      //   enum: ["learner", "educator"],
+      //   default: "learner"
+      // }
   })
 );
 
