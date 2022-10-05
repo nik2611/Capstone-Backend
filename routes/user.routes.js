@@ -12,10 +12,16 @@ module.exports = function(app) {
   
   app.get("/api/test/all", controller.allAccess);
 
-  app.get(
-    "/api/authorise/educator",
+  app.post(
+    "/api/authorise/educator/addDemoVideo",
     [authJwt.verifyToken, authJwt.isEducator],
-    controller.educatorBoard
+    controller.educatorBoardDemoVideo
+  );
+
+  app.post(
+    "/api/authorise/educator/uploadImage",
+    [authJwt.verifyToken, authJwt.isEducator],
+    controller.educatorBoardImage
   );
 
   app.get(
