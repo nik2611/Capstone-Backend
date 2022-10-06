@@ -3,21 +3,23 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const db = require("../models");
 const User = db.user;
+const dotenv = require("dotenv");
+dotenv.config();
 
 
 //Configuration
 //AWS S3
 const s3 = new aws.S3({
-  accessKeyId: process.env.S3-ACCESS-KEY,
-  secretAccessKey: process.env.S3-SECRET-ACCESS-KEY,
-  region: process.env.S3-BUCKET-REGION,
+  accessKeyId: process.env.S3_ACCESSKEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESSKEY,
+  region: process.env.S3_BUCKET_REGION,
 });
 
 //Multer
 var upload = (fileType1, fileType2, fileSize) => multer({
   storage: multerS3({
     s3,
-    bucket: dreamlearn-capstone,
+    bucket: "dreamlearn-capstone",
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
@@ -32,7 +34,7 @@ var upload = (fileType1, fileType2, fileSize) => multer({
     if (file.mimetype === fileType1 || file.mimetype === fileType2) {
       cb(null, true);
     } else {
-      cb(null, false);
+      cb(new Error('Invalid mime type')); 
     }
   }
 });
@@ -53,18 +55,16 @@ exports.allAccess = (req, res) => {
   //Educator Board controllers
   exports.educatorBoardDemoVideo = (req, res, next) => {
 
-    res.status(200).send("Educator Content.");
-
     const uploadSingle = upload("video/mp4", "video/mpeg", 40).single(
       "demoVideo"
     );
   
-    uploadSingle(req, res, async (err) => {
+    uploadSingle(req, res, (err) => {
       if (err)
         return res.status(400).json({ success: false, message: err.message });
   
-      await User.create({ videoUrl: req.file.location });
-  
+      //User.create({ videoUrl: req.file.location });
+      
       res.status(200).json({ data: req.file.location });
     });
   }; 
@@ -72,17 +72,15 @@ exports.allAccess = (req, res) => {
 
   exports.educatorBoardImage = (req, res, next) => {
 
-    res.status(200).send("Educator Content.");
-
     const uploadSingle = upload("image/jpeg", "image/png", 5).single(
       "image"
     );
   
-    uploadSingle(req, res, async (err) => {
+    uploadSingle(req, res,  (err) => {
       if (err)
         return res.status(400).json({ success: false, message: err.message });
   
-      await User.create({ photoUrl: req.file.location });
+      //User.create({ photoUrl: req.file.location });
   
       res.status(200).json({ data: req.file.location });
     });
