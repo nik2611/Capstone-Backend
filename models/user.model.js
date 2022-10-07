@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { user } = require(".");
+
 
 const User = mongoose.model(
   "User",
