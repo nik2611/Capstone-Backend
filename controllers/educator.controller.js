@@ -15,6 +15,8 @@ const s3 = new aws.S3({
   region: process.env.S3_BUCKET_REGION,
 });
 
+
+
 //Multer
 var upload = (fileType1, fileType2, fileSize) => multer({
   storage: multerS3({
@@ -38,18 +40,6 @@ var upload = (fileType1, fileType2, fileSize) => multer({
     }
   }
 });
-
-
-//Public content controllers
-exports.allAccess = (req, res) => {
-  res.status(200).send("Public Content.");
-};
-
-
-//Learner Board controllers
-  exports.learnerBoard = (req, res) => {
-    res.status(200).send("Learner Content.");
-  };
   
 
   //Educator Board controllers
