@@ -1,4 +1,4 @@
 //Public content controllers
-exports.allAccess = (req, res) => {
+exports.public = (req, res) => {
     res.status(200).send("Public Content.");
   };

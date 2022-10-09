@@ -31,9 +31,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to DreamLearn application." });
 });
 
+//require('./routes/public.routes')(app);
 require('./routes/auth.routes')(app);
-require('./routes/user.routes')(app);
-
+require('./routes/educator.routes')(app);
+require('./routes/learner.routes')(app);
+//require('./routes/public.routes')(app);
 
 // App Listen for requests
 const PORT = process.env.PORT || 8085;

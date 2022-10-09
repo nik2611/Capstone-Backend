@@ -80,7 +80,7 @@ exports.signin = (req, res) => {
       }
 
       var token = jwt.sign({ id: user.id }, config.secret, {
-        expiresIn: 1800 // 30 mins
+        expiresIn: 3600 // 30 mins
       });
 
       var authority = "ROLE_" + user.role.name.toUpperCase();

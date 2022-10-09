@@ -2,7 +2,7 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const db = require("../models");
-const User = db.user;
+const demoVideo = db.demoVideo;
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -45,18 +45,31 @@ var upload = (fileType1, fileType2, fileSize) => multer({
   //Educator Board controllers
   exports.educatorBoardDemoVideo = (req, res, next) => {
 
+
     const uploadSingle = upload("video/mp4", "video/mpeg", 40).single(
       "demoVideo"
     );
-  
-    uploadSingle(req, res, (err) => {
+    
+
+     uploadSingle(req, res, (err) => {
       if (err)
         return res.status(400).json({ success: false, message: err.message });
-  
-      //User.create({ videoUrl: req.file.location });
-      
+
+      // if(req.body.title == undefined){
+
+      // }
+
+       demoVideo.create({ videoUrl: req.file.location }, function (err, demoVideo) {
+        
+        if(err) handleError(err);
+
+        console.log('User saved successfully!:', demoVideo);
+    });
+    
+    
       res.status(200).json({ data: req.file.location });
     });
+
   }; 
 
 

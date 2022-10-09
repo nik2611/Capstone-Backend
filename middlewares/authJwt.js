@@ -79,7 +79,7 @@ isEducator = (req, res, next) => {
         console.log(role);
 
           if (role[0].name === "educator") {
-            console.log(role.name);
+            //console.log(role[0].name);
             next();
             return;
           }
