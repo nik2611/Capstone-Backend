@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 const Schedule = mongoose.model("Schedule", new mongoose.Schema({
 
+    courseTitle: {type: String, required: true}, 
     topic: {type: String, required: true},
-    time: {type: Number},
-    date: [Date],
+    slotStart: {type: String},
+    slotEnd: {type: String},
+    date: {type:Date},
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course"

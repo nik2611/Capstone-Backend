@@ -23,5 +23,9 @@ module.exports = function(app) {
     controller.educatorBoardAddCourse
   );
 
- 
+  app.post(
+    "/api/authorise/educator/addSchedule",
+    [authJwt.verifyToken, authJwt.isEducator],
+    controller.educatorBoardAddSchedule
+  );
 };

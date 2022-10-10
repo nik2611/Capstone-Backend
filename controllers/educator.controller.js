@@ -2,8 +2,10 @@ const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const db = require("../models");
-const demoVideo = db.demoVideo;
+const DemoVideo = db.demoVideo;
 const Course = db.course;
+const Schedule = db.schedule;
+
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -50,12 +52,12 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
     if (err)
       return res.status(400).json({ success: false, message: err.message });
 
-    if (req.body.title == undefined) {
+    if (req.body.courseTitle == undefined) {
       return res.status(400).json({ success: false, message: "Bad Request" });
     } else {
-      Course.find(
+      Course.findOne(
         {
-          title: req.body.title,
+          title: req.body.courseTitle,
         },
         (err, course) => {
           if (err) {
@@ -63,11 +65,16 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
             return;
           }
 
-          demoVideo.create(
+          if(course === null){
+            console.log("\n", course, "\n");
+            return res.status(400).json({ success: false, message: "Bad Request" });
+          }
+
+          DemoVideo.create(
             {
-              courseTitle: req.body.title,
+              courseTitle: req.body.courseTitle,
               videoUrl: req.file.location,
-              course: course._id,
+              course: course._id
             },
             function (err, demoVideo) {
               if (err) return handleError(err);
@@ -98,7 +105,7 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       classDays: req.body.classDays,
-      educator: req.userId,
+      educator: req.userId
     })
       .then(() => {
         res.status(201).json({ message: "course added successfully", data: req.file.location });
@@ -110,3 +117,47 @@ exports.educatorBoardAddCourse = (req, res, next) => {
 
   });
 };
+
+
+exports.educatorBoardAddSchedule = (req, res, next) => {
+
+  console.log(req.body.courseTitle);
+
+  if (req.body.courseTitle == undefined) {
+    return res.status(400).json({ success: false, message: "Bad Request" });
+  } else {
+
+    Course.findOne(
+      {
+        title: req.body.courseTitle,
+      },
+      (err, course) => {
+        if (err) {
+          res.status(404).json({ message: err });
+          return;
+        }
+
+        if(course === null){
+          console.log("\n", course, "\n");
+          return res.status(400).json({ success: false, message: "Bad Request" });
+        }
+
+        Schedule.create({
+          courseTitle: req.body.courseTitle, 
+          topic: req.body.topic,
+          slotStart: req.body.slotStart,
+          slotEnd: req.body.slotEnd,
+          date: req.body.date,
+          course: course._id
+        })
+          .then(() => {
+            res.status(201).json({ message: "schedule added successfully"});
+          })
+          .catch((error) => {
+            console.error(error);
+            return res.status(500).send("Error: " + error);
+          });
+      });
+
+  }
+}
