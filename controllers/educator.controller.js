@@ -65,21 +65,28 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
             return;
           }
 
-          if(course === null){
+          if (course === null) {
             console.log("\n", course, "\n");
-            return res.status(400).json({ success: false, message: "Bad Request" });
+            return res
+              .status(400)
+              .json({ success: false, message: "Bad Request" });
           }
 
           DemoVideo.create(
             {
               courseTitle: req.body.courseTitle,
               videoUrl: req.file.location,
-              course: course._id
+              course: course._id,
             },
             function (err, demoVideo) {
               if (err) return handleError(err);
 
-              res.status(201).json({ message: "demoVideo added successfully", data: req.file.location  });
+              res
+                .status(201)
+                .json({
+                  message: "demoVideo added successfully",
+                  data: req.file.location,
+                });
             }
           );
         }
@@ -87,7 +94,6 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
     }
   });
 };
-
 
 exports.educatorBoardAddCourse = (req, res, next) => {
   const uploadSingle = upload("image/jpeg", "image/png", 5).single("image");
@@ -105,30 +111,30 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       startDate: req.body.startDate,
       endDate: req.body.endDate,
       classDays: req.body.classDays,
-      educator: req.userId
+      educator: req.userId,
     })
       .then(() => {
-        res.status(201).json({ message: "course added successfully", data: req.file.location });
+        res
+          .status(201)
+          .json({
+            message: "course added successfully",
+            data: req.file.location,
+          });
       })
       .catch((error) => {
         console.error(error);
         return res.status(500).send("Error: " + error);
       });
-
   });
 };
 
-
 exports.educatorBoardAddSchedule = (req, res, next) => {
+  console.log("\n", req.body[0], "\n");
 
-  console.log("\n",req.body[0], "\n");
-
-  for(let i=0; i<req.body.length; i++){
-
+  for (let i = 0; i < req.body.length; i++) {
     if (req.body[i].courseTitle == undefined) {
       return res.status(400).json({ success: false, message: "Bad Request" });
     } else {
-  
       Course.findOne(
         {
           title: req.body[i].courseTitle,
@@ -138,31 +144,60 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
             res.status(404).json({ message: err });
             return;
           }
-  
-          if(course === null){
+
+          if (course === null) {
             console.log("\n", course, "\n");
-            return res.status(400).json({ success: false, message: "Bad Request" });
+            return res
+              .status(400)
+              .json({ success: false, message: "Bad Request" });
           }
-  
+
           Schedule.create({
-            courseTitle: req.body[i].courseTitle, 
+            courseTitle: req.body[i].courseTitle,
             topic: req.body[i].topic,
             slotStart: req.body[i].slotStart,
             slotEnd: req.body[i].slotEnd,
             date: req.body[i].date,
-            course: course._id
+            course: course._id,
           })
             .then(() => {
-              console.log({ message: "schedule added successfully"});
+              console.log({ message: "schedule added successfully" });
             })
             .catch((error) => {
               console.error(error);
               return res.status(500).send("Error: " + error);
             });
-        });
-  
+        }
+      );
     }
-
   }
-  res.status(201).json({ message: "schedule added successfully"});
-}
+  res.status(201).json({ message: "schedule added successfully" });
+};
+
+exports.educatorBoardAddedCourses = (req, res, next) => {
+  Course.find(
+    {
+      educator: req.userId,
+    },
+    (err, course) => {
+      if (err) {
+        res.status(404).json({ message: err });
+        return;
+      }
+
+      if (course === []) {
+        console.log("\n", course, "\n");
+        return res.status(404).json({ success: false, message: "Not Found" });
+      }
+
+      var courses = [];
+      
+      for (let i = 0; i < course.length; i++) {
+        var obj = { title: course[i].title, image: course[i].imageUrl };
+        courses.push(obj);
+      }
+
+      res.status(200).json({ success: true, message: courses });
+    }
+  );
+};

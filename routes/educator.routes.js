@@ -28,4 +28,10 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddSchedule
   );
+
+  app.post(
+    "/api/authorise/educator/addedCourses",
+    [authJwt.verifyToken, authJwt.isEducator],
+    controller.educatorBoardAddedCourses
+  );
 };
