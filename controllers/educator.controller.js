@@ -38,7 +38,7 @@ var upload = (fileType1, fileType2, fileSize) =>
       if (file.mimetype === fileType1 || file.mimetype === fileType2) {
         cb(null, true);
       } else {
-        cb(new Error("Invalid mime type"));
+        cb(new Error("Invalid mime type"), false);
       }
     },
   });
