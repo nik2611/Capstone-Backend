@@ -34,4 +34,10 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddedCourses
   );
+
+  app.get(
+    "/api/authorise/educator/showDemoVideos",
+    [authJwt.verifyToken, authJwt.isEducator],
+    controller.educatorBoardShowDemoVideos
+  );
 };

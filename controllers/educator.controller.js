@@ -7,6 +7,7 @@ const Course = db.course;
 const Schedule = db.schedule;
 
 const dotenv = require("dotenv");
+const { demoVideo } = require("../models");
 dotenv.config();
 
 //Configuration
@@ -78,7 +79,9 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
             {
               courseTitle: req.body.courseTitle,
               videoUrl: req.file.location,
+              instrument: course.instrument,
               course: course._id,
+              educator: req.userId
             },
             function (err, demoVideo) {
               if (err) return handleError(err);
@@ -204,3 +207,34 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
     }
   );
 };
+
+
+exports.educatorBoardShowDemoVideos = (req, res, next) => {
+
+  DemoVideo.find(
+    {
+      educator: req.userId
+    },
+    (err, demoVideo) => {
+      if (err) {
+        res.status(404).json({ message: err });
+        return;
+      }
+
+      if (demoVideo === []) {
+        console.log("\n", demoVideo, "\n");
+        return res.status(404).json({ success: false, message: "Not Found" });
+      }
+
+      var demoVideos = [];
+      
+      for (let i = 0; i < demoVideo.length; i++) {
+        var obj = { courseTitle: demoVideo[i].courseTitle, videoUrl: demoVideo[i].videoUrl, instrument: demoVideo[i].instrument };
+        demoVideos.push(obj);
+      }
+
+      res.status(200).json({ success: true, message: demoVideos });
+    }
+  );
+
+}
