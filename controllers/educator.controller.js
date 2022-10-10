@@ -38,7 +38,7 @@ var upload = (fileType1, fileType2, fileSize) =>
       if (file.mimetype === fileType1 || file.mimetype === fileType2) {
         cb(null, true);
       } else {
-        cb(new Error("Invalid mime type"), false);
+        cb(null, false);
       }
     },
   });
@@ -104,8 +104,12 @@ exports.educatorBoardAddCourse = (req, res, next) => {
   const uploadSingle = upload("image/jpeg", "image/png", 5).single("image");
 
   uploadSingle(req, res, (err) => {
-    if (err)
+
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ success: false, message: err });
+    } else if (err) {
       return res.status(400).json({ success: false, message: err.message });
+    }      
 
     Course.create({
       imageUrl: req.file.location,
