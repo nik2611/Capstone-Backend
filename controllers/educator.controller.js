@@ -53,12 +53,24 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
     if (err)
       return res.status(400).json({ success: false, message: err.message });
 
+
+      if (req.file == undefined) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message:
+              "The video must be in mp4 or mpeg format and the size should be less than 40MB",
+          });
+      }
+
+
     if (req.body.courseTitle == undefined) {
       res.status(400).json({ success: false, message: "Bad Request" });
     } else {
       Course.findOne(
         {
-          title_lower: req.body.courseTitle.toLowerCase()
+          title_lower: req.body.courseTitle.toLowerCase(),
         },
         (err, course) => {
           if (err) {
@@ -81,17 +93,15 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
               videoUrl: req.file.location,
               instrument: course.instrument,
               course: course._id,
-              educator: req.userId
+              educator: req.userId,
             },
             function (err, demoVideo) {
               if (err) return handleError(err);
 
-              res
-                .status(201)
-                .json({
-                  message: "demoVideo added successfully",
-                  data: req.file.location,
-                });
+              res.status(201).json({
+                message: "demoVideo added successfully",
+                data: req.file.location,
+              });
             }
           );
         }
@@ -104,13 +114,18 @@ exports.educatorBoardAddCourse = (req, res, next) => {
   const uploadSingle = upload("image/jpeg", "image/png", 5).single("image");
 
   uploadSingle(req, res, (err) => {
-
     if (err) {
       return res.status(400).json({ success: false, message: err.message });
-    }      
+    }
 
     if (req.file == undefined) {
-      return res.status(400).json({ success: false, message: "Bad Request" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "The image must be in jpeg or jpg or png format and the size should be less than 5MB",
+        });
     }
 
     Course.create({
@@ -126,12 +141,10 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       educator: req.userId,
     })
       .then(() => {
-        res
-          .status(201)
-          .json({
-            message: "course added successfully",
-            data: req.file.location,
-          });
+        res.status(201).json({
+          message: "course added successfully",
+          data: req.file.location,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -149,7 +162,7 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
     } else {
       Course.findOne(
         {
-          title_lower: req.body.courseTitle.toLowerCase()
+          title_lower: req.body.courseTitle.toLowerCase(),
         },
         (err, course) => {
           if (err) {
@@ -203,7 +216,7 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
       }
 
       var courses = [];
-      
+
       for (let i = 0; i < course.length; i++) {
         var obj = { title: course[i].title, image: course[i].imageUrl };
         courses.push(obj);
@@ -214,12 +227,10 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
   );
 };
 
-
 exports.educatorBoardShowDemoVideos = (req, res, next) => {
-
   DemoVideo.find(
     {
-      educator: req.userId
+      educator: req.userId,
     },
     (err, demoVideo) => {
       if (err) {
@@ -233,14 +244,17 @@ exports.educatorBoardShowDemoVideos = (req, res, next) => {
       }
 
       var demoVideos = [];
-      
+
       for (let i = 0; i < demoVideo.length; i++) {
-        var obj = { courseTitle: demoVideo[i].courseTitle, videoUrl: demoVideo[i].videoUrl, instrument: demoVideo[i].instrument };
+        var obj = {
+          courseTitle: demoVideo[i].courseTitle,
+          videoUrl: demoVideo[i].videoUrl,
+          instrument: demoVideo[i].instrument,
+        };
         demoVideos.push(obj);
       }
 
       res.status(200).json({ success: true, message: demoVideos });
     }
   );
-
-}
+};
