@@ -38,7 +38,7 @@ var upload = (fileType1, fileType2, fileSize) =>
       if (file.mimetype === fileType1 || file.mimetype === fileType2) {
         cb(null, true);
       } else {
-        cb(new Error('I don\'t have a clue!'), false);
+        cb(null, false);
       }
     },
   });
@@ -54,7 +54,7 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
       return res.status(400).json({ success: false, message: err.message });
 
     if (req.body.courseTitle == undefined) {
-      return res.status(400).json({ success: false, message: "Bad Request" });
+      res.status(400).json({ success: false, message: "Bad Request" });
     } else {
       Course.findOne(
         {
@@ -105,11 +105,13 @@ exports.educatorBoardAddCourse = (req, res, next) => {
 
   uploadSingle(req, res, (err) => {
 
-    if (err instanceof multer.MulterError) {
-      return res.status(400).json({ success: false, message: err });
-    } else if (err) {
+    if (err) {
       return res.status(400).json({ success: false, message: err.message });
     }      
+
+    if (req.file.location == undefined) {
+      return res.status(400).json({ success: false, message: "Bad Request" });
+    }
 
     Course.create({
       imageUrl: req.file.location,
