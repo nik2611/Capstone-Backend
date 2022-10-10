@@ -4,12 +4,12 @@ const Course = mongoose.model("Course", new mongoose.Schema({
 
     imageUrl: {type: String, required: true},
     title: {type: String, required: true, unique: true},
-    description: [String],
+    description: {type:String},
     instrument: {type:String},
-    duration: [String],
-    startDate: [Date],
-    endDate: [Date],
-    classDays: [String],
+    duration: {type:String},
+    startDate: Date,
+    endDate: Date,
+    classDays: {type:String},
     educator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

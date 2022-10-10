@@ -18,9 +18,9 @@ module.exports = function(app) {
   );
 
   app.post(
-    "/api/authorise/educator/uploadImage",
+    "/api/authorise/educator/addCourse",
     [authJwt.verifyToken, authJwt.isEducator],
-    controller.educatorBoardImage
+    controller.educatorBoardAddCourse
   );
 
  
