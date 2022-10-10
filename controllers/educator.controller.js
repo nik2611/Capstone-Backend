@@ -38,7 +38,7 @@ var upload = (fileType1, fileType2, fileSize) =>
       if (file.mimetype === fileType1 || file.mimetype === fileType2) {
         cb(null, true);
       } else {
-        cb(null, false);
+        cb(new Error('I don\'t have a clue!'), false);
       }
     },
   });
