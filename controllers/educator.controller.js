@@ -57,13 +57,15 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
     } else {
       Course.findOne(
         {
-          title: req.body.courseTitle,
+          title_lower: req.body.courseTitle.toLowerCase()
         },
         (err, course) => {
           if (err) {
             res.status(404).json({ message: err });
             return;
           }
+
+          console.log("\n", course, "\n");
 
           if (course === null) {
             console.log("\n", course, "\n");
@@ -105,6 +107,7 @@ exports.educatorBoardAddCourse = (req, res, next) => {
     Course.create({
       imageUrl: req.file.location,
       title: req.body.title,
+      title_lower: req.body.title.toLowerCase(),
       description: req.body.description,
       instrument: req.body.instrument,
       duration: req.body.duration,
@@ -137,7 +140,7 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
     } else {
       Course.findOne(
         {
-          title: req.body[i].courseTitle,
+          title_lower: req.body.courseTitle.toLowerCase()
         },
         (err, course) => {
           if (err) {
