@@ -12,8 +12,10 @@ module.exports = function(app) {
   
 
   app.get(
-    "/api/authorise/learner",
+    "/api/authorise/learnerHomePage",
     [authJwt.verifyToken, authJwt.isLearner],
-    controller.learnerBoard
+    controller.learnerBoardHomePage
   );
+
+
 };

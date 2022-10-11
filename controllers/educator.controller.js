@@ -5,6 +5,7 @@ const db = require("../models");
 const DemoVideo = db.demoVideo;
 const Course = db.course;
 const Schedule = db.schedule;
+const User = db.user;
 
 const dotenv = require("dotenv");
 const { demoVideo } = require("../models");
@@ -59,8 +60,8 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
           .status(400)
           .json({
             success: false,
-            message:
-              "The video must be in mp4 or mpeg format and the size should be less than 40MB",
+            fileFormat: "mp4/mpeg only",
+          fileSize: "filesize 40MB Max"
           });
       }
 
@@ -123,8 +124,8 @@ exports.educatorBoardAddCourse = (req, res, next) => {
         .status(400)
         .json({
           success: false,
-          message:
-            "The image must be in jpeg or jpg or png format and the size should be less than 5MB",
+          fileFormat: "jpeg/jpg/png only",
+          fileSize: "filesize 5MB Max"
         });
     }
 
@@ -226,6 +227,7 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
     }
   );
 };
+
 
 exports.educatorBoardShowDemoVideos = (req, res, next) => {
   DemoVideo.find(
