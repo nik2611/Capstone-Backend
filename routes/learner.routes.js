@@ -17,7 +17,7 @@ module.exports = function(app) {
     controller.learnerBoardHomePage
   );
 
-  app.get(
+  app.post(
     "/api/authorise/learnerInstrumentCourses",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardInstrumentCourses
@@ -27,6 +27,12 @@ module.exports = function(app) {
     "/api/authorise/learnerDetailedCourseInfo",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardDetailedCourseInfo
+  );
+
+  app.post(
+    "/api/authorise/learnerRegisteredCourses",
+    [authJwt.verifyToken, authJwt.isLearner],
+    controller.learnerBoardRegisteredCourses
   );
 
 
