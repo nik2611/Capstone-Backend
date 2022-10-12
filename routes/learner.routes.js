@@ -23,7 +23,7 @@ module.exports = function(app) {
     controller.learnerBoardInstrumentCourses
   );
 
-  app.get(
+  app.post(
     "/api/authorise/learnerDetailedCourseInfo",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardDetailedCourseInfo

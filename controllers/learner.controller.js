@@ -119,7 +119,7 @@ exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
               courseDetails.push(obj);   
               
         
-        console.log("\noutside", courseDetails, "loop\n");
+        console.log("\n", courseDetails, "\n");
         res.status(200).json({ success: true, message: courseDetails }); 
   })
   .catch(err => {
@@ -133,21 +133,46 @@ exports.learnerBoardRegisteredCourses = (req, res, next) => {
 
   
   CourseRegister.create({
-    courseT: req.body.courseTitle,
-    topic: req.body.topic,
-    slotStart: req.body.slotStart,
-    slotEnd: req.body.slotEnd,
-    date: req.body.date,
-    course: course._id,
+    user: req.userId,
+    course: req.body.courseID
   })
     .then(() => {
-      console.log({ message: "schedule added successfully" });
-      res.status(201).json({ message: "schedule added successfully" });
+      console.log({ message: "Registered successfully" });
     })
     .catch((error) => {
       console.error(error);
-      return res.status(500).send("Error: " + error);
+      return res.status(500).json({"Error: " : error});
     });
+
+    
+  CourseRegister.find({user: req.userId})
+  .select("course -_id")
+  .populate({path:'course',select:'title -_id -__v'})
+  .exec()
+  .then(registeredCourse => {
+    console.log("\nregistered", registeredCourse, "\ncourses");
+
+    if (typeof registeredCourse !== 'undefined' && registeredCourse.length === 0) {
+      console.log("\nregistered", registeredCourse, "\ncourses");
+      return res.status(404).json({ success: false, message: "Not Found" });
+    }
+
+
+    let registeredCourses = [];
+  
+    for(let i=0; i < registeredCourse.length; i++)
+    {
+              let obj = {
+                
+                courseTitle: registeredCourse.course.title
+                
+              };
+
+              registeredCourses.push(obj);   
+    }
+        res.status(200).json({ success: true, message: "Registered successfully", content: registeredCourses }); 
+      
+  })
 
 
   // Course.find({_id: req.body.instrument})
