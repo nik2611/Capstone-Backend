@@ -41,7 +41,11 @@ module.exports = function(app) {
     controller.learnerBoardRegisteredCourses
   );
 
-
+  app.post(
+    "/api/authorise/learnerRegisteredCoursesSchedule",
+    [authJwt.verifyToken, authJwt.isLearner],
+    controller.learnerBoardRegisteredCoursesSchedule
+  );
   
 
   
