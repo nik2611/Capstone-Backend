@@ -8,8 +8,8 @@ const Course = mongoose.model("Course", new mongoose.Schema({
     description: {type:String},
     instrument: {type:String},
     duration: {type:String},
-    startDate: String,
-    endDate: String,
+    startDate: {type: String},
+    endDate: {type: String},
     classDays: {type:String},
     educator: {
         type: mongoose.Schema.Types.ObjectId,

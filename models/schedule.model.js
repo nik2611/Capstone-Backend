@@ -6,7 +6,7 @@ const Schedule = mongoose.model("Schedule", new mongoose.Schema({
     topic: {type: String, required: true},
     slotStart: {type: String},
     slotEnd: {type: String},
-    date: String,
+    date: {type: String},
     course: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Course"
