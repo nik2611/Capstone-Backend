@@ -190,6 +190,7 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
               if (err) return handleError(err);
 
               console.log({ message: "schedule added successfully" });
+              
             })
               // .then(() => {
               //   console.log({ message: "schedule added successfully" });
@@ -202,8 +203,8 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
         );
       }
     }
-
     res.status(201).json({ message: "schedule added successfully" });
+
   } else {
 
     if (req.body.courseTitle == undefined) {
