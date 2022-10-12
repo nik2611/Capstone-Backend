@@ -21,11 +21,11 @@ exports.learnerBoardHomePage = (req, res, next) => {
           return res.status(404).json({ success: false, message: "Not Found" });
         }
 
-        var demoVideos = [];
+        let demoVideos = [];
   
         for (let i = 0; i < demoVideo.length; i++) {
 
-              var obj = {
+              let obj = {
                 educator: demoVideo[i].educator.name,
                 videoUrl: demoVideo[i].videoUrl,
                 instrument: demoVideo[i].instrument,
@@ -59,11 +59,11 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
           return res.status(404).json({ success: false, message: "Not Found" });
         }
 
-        var instrumentCourses = [];
+        let instrumentCourses = [];
   
         for (let i = 0; i < instrumentCourse.length; i++) {
 
-              var obj = {
+              let obj = {
                 educator: instrumentCourse[i].educator.name,
                 imageUrl: instrumentCourse[i].imageUrl,
                 instrument: instrumentCourse[i].instrument,
@@ -75,6 +75,51 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
                     
         }
         res.status(200).json({ success: true, message: instrumentCourses }); 
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(404).json({ message: err });
+  });
+}
+
+
+exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
+
+  DemoVideo.findOne({courseTitle: req.body.courseTitle})
+  .select("videoUrl educator course -_id")
+  .populate({path:'course',select:'-educator -_id -__v'})
+  .populate({path:'educator',select:'name -_id'})
+  .exec()
+  .then(courseDetail => {
+  
+    console.log("\n", courseDetail, "\n");
+
+        if (courseDetail === null) {
+          console.log("\ninside", courseDetail, "\nIF");
+          return res.status(404).json({ success: false, message: "Not Found" });
+        }
+
+        let courseDetails = [];
+  
+              let obj = {
+                educator: courseDetail.educator.name,
+                videoUrl: courseDetail.videoUrl,
+                imageUrl: courseDetail.course.imageUrl,
+                courseTitle: courseDetail.course.title,
+                description: courseDetail.course.description,
+                instrument: courseDetail.course.instrument,
+                duration: courseDetail.course.duration,
+                startDate: courseDetail.course.startDate,
+                endDate: courseDetail.course.endDate,
+                classDays: courseDetail.course.classDays
+                
+              };
+
+              courseDetails.push(obj);   
+              
+        
+        console.log("\noutside", courseDetails, "loop\n");
+        res.status(200).json({ success: true, message: courseDetails }); 
   })
   .catch(err => {
     console.log(err);

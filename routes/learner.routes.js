@@ -23,5 +23,11 @@ module.exports = function(app) {
     controller.learnerBoardInstrumentCourses
   );
 
+  app.get(
+    "/api/authorise/learnerDetailedCourseInfo",
+    [authJwt.verifyToken, authJwt.isLearner],
+    controller.learnerBoardDetailedCourseInfo
+  );
+
 
 };
