@@ -246,7 +246,6 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
     }
 
   }
- 
   
 };
 

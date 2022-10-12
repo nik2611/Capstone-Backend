@@ -46,6 +46,9 @@ exports.learnerBoardHomePage = (req, res, next) => {
 
 exports.learnerBoardInstrumentCourses = (req, res, next) => {
 
+  if (req.body.instrument == undefined) {
+    return res.status(400).json({ success: false, message: "Bad Request" });
+  }
   Course.find({instrument: req.body.instrument})
   .select("imageUrl title description educator instrument -_id")
   .populate({path:'educator',select:'name -_id'})
@@ -85,6 +88,9 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
 
 exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
 
+  if (req.body.courseTitle == undefined) {
+    return res.status(400).json({ success: false, message: "Bad Request" });
+  }
   DemoVideo.findOne({courseTitle: req.body.courseTitle})
   .select("videoUrl educator course -_id")
   .populate({path:'course',select:'-educator -__v'})
