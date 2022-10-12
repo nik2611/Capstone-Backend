@@ -17,13 +17,13 @@ module.exports = function(app) {
     controller.learnerBoardHomePage
   );
 
-  app.get(
+  app.post(
     "/api/authorise/learnerInstrumentCourses",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardInstrumentCourses
   );
 
-  app.get(
+  app.post(
     "/api/authorise/learnerDetailedCourseInfo",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardDetailedCourseInfo
