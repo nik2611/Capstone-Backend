@@ -272,7 +272,11 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
         courses.push(obj);
       }
 
-      res.status(200).json({ success: true, message: courses });
+      if(typeof courses !== 'undefined' && courses.length === 0){
+      res.status(200).json({ success: true, message: "No courses added yet!" });
+      } else{
+        res.status(200).json({ success: true, message: courses });
+      }
     }
   );
 };

@@ -29,7 +29,7 @@ module.exports = function(app) {
     controller.educatorBoardAddSchedule
   );
 
-  app.post(
+  app.get(
     "/api/authorise/educator/addedCourses",
     [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddedCourses
