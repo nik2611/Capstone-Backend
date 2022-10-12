@@ -72,6 +72,7 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
       Course.findOne(
         {
           title_lower: req.body.courseTitle.toLowerCase(),
+          educator: req.userId
         },
         (err, course) => {
           if (err) {
