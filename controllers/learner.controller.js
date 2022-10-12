@@ -8,13 +8,14 @@ const DemoVideo = db.demoVideo;
 exports.learnerBoardHomePage = (req, res, next) => {
   
   DemoVideo.find()
-  .select("educator videoUrl instrument")
+  .select("educator videoUrl instrument -_id")
+  .populate({path:'educator',select:'name -_id'})
   .exec()
   .then(demoVideo => {
   
     console.log("\ndemo", demoVideo, "\nVideo");
 
-        if (demoVideo === []) {
+        if (typeof demoVideo !== 'undefined' && demoVideo.length === 0) {
           console.log("\ndemo", demoVideo, "\nVideo");
           return res.status(404).json({ success: false, message: "Not Found" });
         }
@@ -23,31 +24,16 @@ exports.learnerBoardHomePage = (req, res, next) => {
   
         for (let i = 0; i < demoVideo.length; i++) {
 
-          User.findOne({_id: demoVideo[i].educator}, (err, educator) => {
-            if (err) {
-              res.status(404).json({ message: err });
-              return;
-            }
-  
-            // console.log("\nedu", educator, "\ncator");
-  
-            // if (educator === null) {
-            //   console.log("\nche", educator, "ck\n");
-            //   return res
-            //     .status(500)
-            //     .json({ success: false, message: "Internal server error" });
-            // } 
-
               var obj = {
-                educator: educator.name,
+                educator: demoVideo[i].educator.name,
                 videoUrl: demoVideo[i].videoUrl,
                 instrument: demoVideo[i].instrument,
               };
               demoVideos.push(obj);
-              res.status(200).json({ success: true, message: demoVideos });  
-          });          
+               
+                    
         }
-        
+        res.status(200).json({ success: true, message: demoVideos }); 
   })
   .catch(err => {
     console.log(err);

@@ -79,10 +79,10 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
             return;
           }
 
-          console.log("\n", course, "\n");
+          console.log("\nempty", course, "\nobject");
 
           if (course === null) {
-            console.log("\n", course, "\n");
+            console.log("\nempty", course, "\nobject");
             return res
               .status(400)
               .json({ success: false, message: "Bad Request" });
@@ -155,10 +155,57 @@ exports.educatorBoardAddCourse = (req, res, next) => {
 };
 
 exports.educatorBoardAddSchedule = (req, res, next) => {
-  console.log("\n", req.body[0], "\n");
+  console.log("\n", req.body, "\n");
 
-  for (let i = 0; i < req.body.length; i++) {
-    if (req.body[i].courseTitle == undefined) {
+  if(Array.isArray(req.body)){
+
+    for (let i = 0; i < req.body.length; i++) {
+      if (req.body[i].courseTitle == undefined) {
+        res.status(400).json({ success: false, message: "Bad Request" });
+      } else {
+         Course.findOne(
+          {
+            title_lower: req.body[i].courseTitle.toLowerCase(),
+          },
+          (err, course) => {
+            if (err) {
+              res.status(404).json({ message: err });
+              return;
+            }
+  
+            if (course === null) {
+              console.log("\nempty", course, "\nobject");
+              return res.status(400).json({ success: false, message: "Bad Request" });
+            } 
+  
+            Schedule.create({
+              courseTitle: req.body[i].courseTitle,
+              topic: req.body[i].topic,
+              slotStart: req.body[i].slotStart,
+              slotEnd: req.body[i].slotEnd,
+              date: req.body[i].date,
+              course: course._id,
+            },function (err, schedule) {
+              if (err) return handleError(err);
+
+              console.log({ message: "schedule added successfully" });
+            })
+              // .then(() => {
+              //   console.log({ message: "schedule added successfully" });
+              // })
+              // .catch((error) => {
+              //   console.error(error);
+              //   return res.status(500).send("Error: " + error);
+              // });
+          }
+        );
+      }
+    }
+
+    res.status(201).json({ message: "schedule added successfully" });
+  } else {
+
+    if (req.body.courseTitle == undefined) {
       return res.status(400).json({ success: false, message: "Bad Request" });
     } else {
       Course.findOne(
@@ -172,22 +219,21 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
           }
 
           if (course === null) {
-            console.log("\n", course, "\n");
-            return res
-              .status(400)
-              .json({ success: false, message: "Bad Request" });
+            console.log("\nempty", course, "\nobject");
+            return res.status(400).json({ success: false, message: "Bad Request" });
           }
 
           Schedule.create({
-            courseTitle: req.body[i].courseTitle,
-            topic: req.body[i].topic,
-            slotStart: req.body[i].slotStart,
-            slotEnd: req.body[i].slotEnd,
-            date: req.body[i].date,
+            courseTitle: req.body.courseTitle,
+            topic: req.body.topic,
+            slotStart: req.body.slotStart,
+            slotEnd: req.body.slotEnd,
+            date: req.body.date,
             course: course._id,
           })
             .then(() => {
               console.log({ message: "schedule added successfully" });
+              res.status(201).json({ message: "schedule added successfully" });
             })
             .catch((error) => {
               console.error(error);
@@ -196,9 +242,12 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
         }
       );
     }
+
   }
-  res.status(201).json({ message: "schedule added successfully" });
+ 
+  
 };
+
 
 exports.educatorBoardAddedCourses = (req, res, next) => {
   Course.find(

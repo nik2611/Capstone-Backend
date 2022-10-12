@@ -3,46 +3,81 @@ const ROLES = db.ROLES;
 const User = db.user;
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
+
+  console.log("SIGN_UP REQ BODY", req.body);
   // Username Validation
+  // User.findOne({
+  //   username: req.body.username
+  // })
+  // .exec()
+  // .then(user => {
+  //   if (user !== null) {
+  //     return res.status(409).json({
+  //       message: "Username exists"
+  //     });
+  //   }
+  // })
+  // .catch(err => {
+  //   console.log(err);
+  //   return res.status(500).json({
+  //     error: err
+  //   });
+  // });
+
+  //   // Email Validation
+  //   User.findOne({
+  //     email: req.body.email
+  //   })
+  //   .exec()
+  //   .then(user => {
+  //     if (user !== null) {
+  //       return res.status(409).json({
+  //         message: "Email exists"
+  //       });
+  //     }
+  //   })
+  //   .catch(err => {
+  //     console.log(err);
+  //     return res.status(500).json({
+  //       error: err
+  //     })
+  //   });
+
+  //     next();
+  //   };
+
+
   User.findOne({
     username: req.body.username
-  })
-  .exec()
-  .then(user => {
-    if (user !== null) {
-      return res.status(409).json({
-        message: "Username exists"
-      });
+  }).exec((err, user) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
     }
-  })
-  .catch(err => {
-    console.log(err);
-    return res.status(500).json({
-      error: err
-    });
-  });
 
-    // Email Validation
+    if (user) {
+      res.status(400).send({ message: "Failed! Username is already in use!" });
+      return;
+    }
+
+    // Email
     User.findOne({
       email: req.body.email
-    })
-    .exec()
-    .then(user => {
-      if (user !== null) {
-        return res.status(409).json({
-          message: "Email exists"
-        });
+    }).exec((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
       }
-    })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({
-        error: err
-      })
-    });
+
+      if (user) {
+        res.status(400).send({ message: "Failed! Email is already in use!" });
+        return;
+      }
 
       next();
-    };
+    });
+  });
+};
 
 
 checkRolesExisted = (req, res, next) => {
