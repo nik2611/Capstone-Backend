@@ -29,5 +29,21 @@ module.exports = function(app) {
     controller.learnerBoardDetailedCourseInfo
   );
 
+  app.post(
+    "/api/authorise/learnerRegisterCourse",
+    [authJwt.verifyToken, authJwt.isLearner],
+    controller.learnerBoardRegisterCourse
+  );
+
+  app.get(
+    "/api/authorise/learnerRegisteredCourses",
+    [authJwt.verifyToken, authJwt.isLearner],
+    controller.learnerBoardRegisteredCourses
+  );
+
+
+  
+
+  
 
 };
