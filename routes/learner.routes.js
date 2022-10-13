@@ -29,7 +29,7 @@ module.exports = function(app) {
     controller.learnerBoardDetailedCourseInfo
   );
 
-  app.post(
+  app.get(
     "/api/learner/RegisterCourse/:courseID",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardRegisterCourse
