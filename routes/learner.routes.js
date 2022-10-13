@@ -12,42 +12,39 @@ module.exports = function(app) {
   
 
   app.get(
-    "/api/authorise/learnerHomePage",
+    "/api/learner/HomePage",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardHomePage
   );
 
-  app.post(
-    "/api/authorise/learnerInstrumentCourses",
+  app.get(
+    "/api/learner/InstrumentCourses/:instrument",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardInstrumentCourses
   );
 
-  app.post(
-    "/api/authorise/learnerDetailedCourseInfo",
+  app.get(
+    "/api/learner/DetailedCourseInfo/:courseTitle",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardDetailedCourseInfo
   );
 
   app.post(
-    "/api/authorise/learnerRegisterCourse",
+    "/api/learner/RegisterCourse/:courseID",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardRegisterCourse
   );
 
   app.get(
-    "/api/authorise/learnerRegisteredCourses",
+    "/api/learner/RegisteredCourses",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardRegisteredCourses
   );
 
-  app.post(
-    "/api/authorise/learnerRegisteredCoursesSchedule",
+  app.get(
+    "/api/learner/RegisteredCoursesSchedule/:courseTitle",
     [authJwt.verifyToken, authJwt.isLearner],
     controller.learnerBoardRegisteredCoursesSchedule
   );
-  
-
-  
 
 };

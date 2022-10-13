@@ -47,10 +47,10 @@ exports.learnerBoardHomePage = (req, res, next) => {
 
 exports.learnerBoardInstrumentCourses = (req, res, next) => {
 
-  if (req.body.instrument == undefined) {
+  if (req.params.instrument == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
-  Course.find({instrument: req.body.instrument})
+  Course.find({instrument: req.params.instrument})
   .select("imageUrl title description educator instrument -_id")
   .populate({path:'educator',select:'name -_id'})
   .exec()
@@ -89,10 +89,10 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
 
 exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
 
-  if (req.body.courseTitle == undefined) {
+  if (req.params.courseTitle == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
-  DemoVideo.findOne({courseTitle: req.body.courseTitle})
+  DemoVideo.findOne({courseTitle: req.params.courseTitle})
   .select("videoUrl educator course -_id")
   .populate({path:'course',select:'-educator -__v'})
   .populate({path:'educator',select:'name -_id'})
@@ -138,14 +138,14 @@ exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
 
 exports.learnerBoardRegisterCourse = (req, res, next) => {
 
-  console.log("\ncourse", req.body.courseID, "\nID");
-  if (req.body.courseID == undefined) {
+  console.log("\ncourse", req.params.courseID, "\nID");
+  if (req.params.courseID == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
   
   CourseRegister.create({
     user: req.userId,
-    course: req.body.courseID
+    course: req.params.courseID
   })
     .then(() => {
       console.log({ message: "Course registered successfully" });
@@ -199,10 +199,10 @@ exports.learnerBoardRegisterCourse = (req, res, next) => {
 
 exports.learnerBoardRegisteredCoursesSchedule = (req, res, next) => {
 
-  if (req.body.courseTitle == undefined) {
+  if (req.params.courseTitle == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
-  Schedule.find({courseTitle: req.body.courseTitle})
+  Schedule.find({courseTitle: req.params.courseTitle})
   .select("topic slotStart slotEnd date -_id")
   .exec()
   .then(schedule => {
