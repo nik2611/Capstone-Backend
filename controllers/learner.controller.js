@@ -12,6 +12,7 @@ exports.learnerBoardHomePage = (req, res, next) => {
   DemoVideo.find()
   .select("educator videoUrl instrument -_id")
   .populate({path:'educator',select:'name -_id'})
+  .populate({path:'course',select:'title _id'})
   .exec()
   .then(demoVideo => {
   
@@ -30,6 +31,8 @@ exports.learnerBoardHomePage = (req, res, next) => {
                 educator: demoVideo[i].educator.name,
                 videoUrl: demoVideo[i].videoUrl,
                 instrument: demoVideo[i].instrument,
+                courseTitle: demoVideo[i].course.title,
+                courseID: demoVideo[i].course._id
               };
               demoVideos.push(obj);
                
