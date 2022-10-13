@@ -10,30 +10,34 @@ module.exports = function(app) {
     next();
   });
   
-app.use([authJwt.verifyToken, authJwt.isEducator]);
 
   app.post(
     "/api/educator/addDemoVideo",
+    [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardDemoVideo
   );
 
   app.post(
     "/api/educator/addCourse",
+    [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddCourse
   );
 
   app.post(
     "/api/educator/addSchedule",
+    [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddSchedule
   );
 
   app.get(
     "/api/educator/addedCourses",
+    [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardAddedCourses
   );
 
   app.get(
     "/api/educator/showDemoVideos",
+    [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardShowDemoVideos
   );
 };
