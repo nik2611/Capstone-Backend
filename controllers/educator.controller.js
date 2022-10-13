@@ -71,7 +71,7 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
     } else {
       Course.findOne(
         {
-          title_lower: req.body.courseTitle.toLowerCase(),
+          title: req.body.courseTitle,
           educator: req.userId
         },
         (err, course) => {
@@ -91,7 +91,7 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
 
           DemoVideo.create(
             {
-              courseTitle: req.body.courseTitle,
+              courseTitle: course.title,
               videoUrl: req.file.location,
               instrument: course.instrument,
               course: course._id,
@@ -133,7 +133,6 @@ exports.educatorBoardAddCourse = (req, res, next) => {
     Course.create({
       imageUrl: req.file.location,
       title: req.body.title,
-      title_lower: req.body.title.toLowerCase(),
       description: req.body.description,
       instrument: req.body.instrument,
       duration: req.body.duration,
@@ -150,7 +149,7 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       })
       .catch((error) => {
         console.error(error);
-        return res.status(500).send("Error: " + error);
+        return res.status(400).send("Error: " + error);
       });
   });
 };
@@ -166,7 +165,7 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
       } else {
          Course.findOne(
           {
-            title_lower: req.body[i].courseTitle.toLowerCase(),
+            title: req.body[i].courseTitle,
           },
           (err, course) => {
             if (err) {
@@ -212,7 +211,7 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
     } else {
       Course.findOne(
         {
-          title_lower: req.body.courseTitle.toLowerCase(),
+          title: req.body.courseTitle
         },
         (err, course) => {
           if (err) {
