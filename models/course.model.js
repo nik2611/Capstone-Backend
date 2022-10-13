@@ -6,7 +6,7 @@ const Course = mongoose.model("Course", new mongoose.Schema({
     title: {type: String, required: true, unique: true, lowercase: true, trim: true}, //lowercase: true, trim: true
     description: {type:String},
     instrument: {type:String},
-    duration: {type:String},
+    duration: {type:Number},
     startDate: String,
     endDate: String,
     classDays: {type:String},
