@@ -72,7 +72,8 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
                 imageUrl: instrumentCourse[i].imageUrl,
                 instrument: instrumentCourse[i].instrument,
                 courseTitle: instrumentCourse[i].title,
-                description: instrumentCourse[i].description
+                startDate: instrumentCourse[i].startDate,
+                endDate: instrumentCourse[i].endDate
               };
               instrumentCourses.push(obj);
                
