@@ -1,4 +1,4 @@
-const { demoVideo, schedule } = require("../models");
+const { demoVideo, schedule, course, courseRegister } = require("../models");
 const db = require("../models");
 const User = db.user;
 const DemoVideo = db.demoVideo;
@@ -142,19 +142,39 @@ exports.learnerBoardRegisterCourse = (req, res, next) => {
   if (req.params.courseID == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
+
   
-  CourseRegister.create({
-    user: req.userId,
-    course: req.params.courseID
+  CourseRegister.findOne({user: req.userId,
+    course: req.params.courseID})
+  .exec()
+  .then(courseRegister => {
+  
+    console.log("\n", courseRegister, "\n");
+
+        if (courseRegister === null) {
+          console.log("\ninside", courseRegister, "\nIF");
+          
+          CourseRegister.create({
+            user: req.userId,
+            course: req.params.courseID
+          })
+            .then(() => {
+              console.log({ message: "Course registered successfully" });
+              res.status(201).json({ success: true, message: "Course registered successfully"}); 
+            })
+            .catch((error) => {
+              console.error(error);
+              return res.status(500).json({"Error: " : error});
+            });
+        } else {
+          res.status(400).json({ success: false, message: "Course already registered"});
+        }
+
   })
-    .then(() => {
-      console.log({ message: "Course registered successfully" });
-      res.status(201).json({ success: true, message: "Course registered successfully"}); 
-    })
-    .catch((error) => {
-      console.error(error);
-      return res.status(500).json({"Error: " : error});
-    });
+  .catch(err => {
+    console.log(err);
+    res.status(404).json({ message: err });
+  });
 
   }
 
