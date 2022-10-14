@@ -54,7 +54,7 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
   Course.find({instrument: req.params.instrument})
-  .select("imageUrl title description educator instrument -_id")
+  .select("imageUrl title description startDate endDate educator instrument -_id")
   .populate({path:'educator',select:'name -_id'})
   .exec()
   .then(instrumentCourse => {
