@@ -159,25 +159,25 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
 
   if(Array.isArray(req.body)){
 
+  if (req.body[0].courseTitle == undefined) {
+    return res.status(400).json({ success: false, message: "Course title not defined" });
+  } 
+     Course.findOne(
+      {
+        title: req.body[0].courseTitle,
+      },
+      (err, course) => {
+        if (err) {
+          return res.status(500).json({ message: err });
+        }
+
+        if (course === null) {
+          console.log("\nempty", course, "\nobject");
+          return res.status(400).json({ success: false, message: "Course is not added yet to add schedule" });
+        }  
+
     for (let i = 0; i < req.body.length; i++) {
-      if (req.body[i].courseTitle == undefined) {
-        res.status(400).json({ success: false, message: "Bad Request" });
-      } else {
-         Course.findOne(
-          {
-            title: req.body[i].courseTitle,
-          },
-          (err, course) => {
-            if (err) {
-              res.status(404).json({ message: err });
-              return;
-            }
-  
-            if (course === null) {
-              console.log("\nempty", course, "\nobject");
-              return res.status(400).json({ success: false, message: "Bad Request" });
-            } 
-  
+        
             Schedule.create({
               courseTitle: req.body[i].courseTitle,
               topic: req.body[i].topic,
@@ -185,45 +185,45 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
               slotEnd: req.body[i].slotEnd,
               date: req.body[i].date,
               course: course._id,
-            },function (err, schedule) {
-              if (err) return handleError(err);
+            }
+            // ,function (err, schedule) {
+            //   if (err) return handleError(err);
 
-              console.log({ message: "schedule added successfully" });
+            //   console.log({ message: "schedule added successfully" });
               
-            })
-              // .then(() => {
-              //   console.log({ message: "schedule added successfully" });
-              // })
-              // .catch((error) => {
-              //   console.error(error);
-              //   return res.status(500).send("Error: " + error);
-              // });
-          }
-        );
-      }
+            // }
+            )
+              .then(() => {
+                console.log({ message: "schedule added successfully" });
+              })
+              .catch((error) => {
+                console.error(error);
+                return res.status(500).send("Error: " + error);
+              });      
     }
     res.status(201).json({ message: "schedule added successfully" });
-
+  }
+  );
   } else {
 
     if (req.body.courseTitle == undefined) {
-      return res.status(400).json({ success: false, message: "Bad Request" });
-    } else {
-      Course.findOne(
+      return res.status(400).json({ success: false, message: "Course title not defined" });
+    } 
+       Course.findOne(
         {
-          title: req.body.courseTitle
+          title: req.body.courseTitle,
         },
         (err, course) => {
           if (err) {
-            res.status(404).json({ message: err });
-            return;
+           return res.status(500).json({ message: err });
           }
-
+  
           if (course === null) {
-            console.log("\nempty", course, "\nobject");
-            return res.status(400).json({ success: false, message: "Bad Request" });
-          }
-
+            console.log("\nempty_single", course, "\nbody_object");
+            return res.status(400).json({ success: false, message: "Course is not added yet to add schedule" });
+          } 
+  
+        
           Schedule.create({
             courseTitle: req.body.courseTitle,
             topic: req.body.topic,
@@ -240,12 +240,10 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
               console.error(error);
               return res.status(500).send("Error: " + error);
             });
-        }
-      );
-    }
-
-  }
+          }
+          );
   
+          }
 };
 
 
