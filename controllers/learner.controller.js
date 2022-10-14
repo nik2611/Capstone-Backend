@@ -91,6 +91,7 @@ exports.learnerBoardInstrumentCourses = (req, res, next) => {
 }
 
 
+
 exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
 
   if (req.params.courseTitle == undefined) {
@@ -135,7 +136,7 @@ exports.learnerBoardDetailedCourseInfo = (req, res, next) => {
   })
   .catch(err => {
     console.log(err);
-    res.status(404).json({ message: err });
+    res.status(500).json({ message: err });
   });
 }
 
