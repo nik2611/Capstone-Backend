@@ -40,4 +40,10 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isEducator],
     controller.educatorBoardShowDemoVideos
   );
+
+  app.get(
+    "/api/educator/showAddedCourseSchedule/:courseTitle",
+    [authJwt.verifyToken, authJwt.isEducator],
+    controller.educatorBoardShowAddedCourseSchedule
+  );
 };
