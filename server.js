@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 
 //Configuration
 var corsOptions = {
-  origin: "*"
+  origin: "https://capstone-copy-d8n2w5ecj-meghamaurya.vercel.app/"
 };
 
 dotenv.config();
