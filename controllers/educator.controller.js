@@ -46,11 +46,11 @@ var upload = (fileType1, fileType2, fileSize) =>
 
 //Educator Board controllers
 exports.educatorBoardDemoVideo = (req, res, next) => {
-  const uploadSingle = upload("video/mp4", "video/mpeg", 40).single(
+  const uploadVideo = upload("video/mp4", "video/mpeg", 40).single(
     "demoVideo"
   );
 
-  uploadSingle(req, res, (err) => {
+  uploadVideo(req, res, (err) => {
     if (err)
       return res.status(400).json({ success: false, message: err.message });
 
@@ -113,9 +113,15 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
 };
 
 exports.educatorBoardAddCourse = (req, res, next) => {
-  const uploadSingle = upload("image/jpeg", "image/png", 5).single("image");
-
-  uploadSingle(req, res, (err) => {
+  
+  
+  
+  
+  
+  
+  
+  const uploadImage = upload("image/jpeg", "image/png", 5).single("image");
+  uploadImage(req, res, (err) => {
     if (err) {
       return res.status(400).json({ success: false, message: err.message });
     }
@@ -131,6 +137,7 @@ exports.educatorBoardAddCourse = (req, res, next) => {
     }
 
     Course.create({
+      videoUrl: videoLocation,
       imageUrl: req.file.location,
       title: req.body.title,
       description: req.body.description,
@@ -153,6 +160,8 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       });
   });
 };
+
+
 
 exports.educatorBoardAddSchedule = (req, res, next) => {
   console.log("\n", req.body, "\n");
