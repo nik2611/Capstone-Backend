@@ -36,8 +36,12 @@ var upload = (fileType1, fileType2, fileSize, fileType3, fileType4) =>
       fileSize: 1024 * 1024 * fileSize,
     },
     fileFilter: function (req, file, cb) {
-      if (file.mimetype === fileType1 || file.mimetype === fileType2 || 
-        file.mimetype === fileType3 || file.mimetype === fileType4) {
+      if (
+        file.mimetype === fileType1 ||
+        file.mimetype === fileType2 ||
+        file.mimetype === fileType3 ||
+        file.mimetype === fileType4
+      ) {
         cb(null, true);
       } else {
         cb(null, false);
@@ -47,25 +51,19 @@ var upload = (fileType1, fileType2, fileSize, fileType3, fileType4) =>
 
 //Educator Board controllers
 exports.educatorBoardDemoVideo = (req, res, next) => {
-  const uploadVideo = upload("video/mp4", "video/mpeg", 40).single(
-    "demoVideo"
-  );
+  const uploadVideo = upload("video/mp4", "video/mpeg", 40).single("demoVideo");
 
   uploadVideo(req, res, (err) => {
     if (err)
       return res.status(400).json({ success: false, message: err.message });
 
-
-      if (req.file == undefined) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            fileFormat: "mp4/mpeg only",
-          fileSize: "filesize 40MB Max"
-          });
-      }
-
+    if (req.file == undefined) {
+      return res.status(400).json({
+        success: false,
+        fileFormat: "mp4/mpeg only",
+        fileSize: "filesize 40MB Max",
+      });
+    }
 
     if (req.body.courseTitle == undefined) {
       res.status(400).json({ success: false, message: "Bad Request" });
@@ -73,7 +71,7 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
       Course.findOne(
         {
           title: req.body.courseTitle,
-          educator: req.userId
+          educator: req.userId,
         },
         (err, course) => {
           if (err) {
@@ -114,40 +112,39 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
 };
 
 exports.educatorBoardAddCourse = (req, res, next) => {
-     
-    
-  const uploadImageVideo = upload("image/jpeg", "image/png", 45, "video/mp4", "video/mpeg")
-  .fields([{name: "image", maxCount: 1}, {name: "video", maxCount: 1}]);
+  const uploadImageVideo = upload(
+    "image/jpeg",
+    "image/png",
+    45,
+    "video/mp4",
+    "video/mpeg"
+  ).fields([
+    { name: "image", maxCount: 1 },
+    { name: "video", maxCount: 1 },
+  ]);
 
   uploadImageVideo(req, res, (err) => {
     if (err) {
       return res.status(400).json({ success: false, message: err.message });
     }
 
-console.log(req.files);
-
+    console.log(req.files);
 
     if (!req.files.image) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          fileFormat: "jpeg/jpg/png only",
-          fileSize: "filesize 5MB Max"
-        });
-    } 
-
+      return res.status(400).json({
+        success: false,
+        fileFormat: "jpeg/jpg/png only",
+        fileSize: "filesize 5MB Max",
+      });
+    }
 
     if (!req.files.video) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-            fileFormat: "mp4/mpeg only",
-          fileSize: "filesize 40MB Max"
-        });
-    } 
-
+      return res.status(400).json({
+        success: false,
+        fileFormat: "mp4/mpeg only",
+        fileSize: "filesize 40MB Max",
+      });
+    }
 
     Course.create({
       videoUrl: req.files.video[0].location,
@@ -162,7 +159,6 @@ console.log(req.files);
       educator: req.userId,
     })
       .then((course) => {
-
         DemoVideo.create(
           {
             courseTitle: req.body.title,
@@ -173,14 +169,14 @@ console.log(req.files);
           },
           function (err, demoVideo) {
             if (err) return handleError(err);
-    
+
             console.log("Demo video added successfully");
           }
         );
 
         console.log("Course added successfully");
         res.status(201).json({
-          message: "Course added successfully"
+          message: "Course added successfully",
         });
       })
       .catch((error) => {
@@ -190,17 +186,16 @@ console.log(req.files);
   });
 };
 
-
-
 exports.educatorBoardAddSchedule = (req, res, next) => {
   console.log("\n", req.body, "\n");
 
-  if(Array.isArray(req.body)){
-
-  if (req.body[0].courseTitle == undefined) {
-    return res.status(400).json({ success: false, message: "Course title not defined" });
-  } 
-     Course.findOne(
+  if (Array.isArray(req.body)) {
+    if (req.body[0].courseTitle == undefined) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Course title not defined" });
+    }
+    Course.findOne(
       {
         title: req.body[0].courseTitle,
       },
@@ -211,12 +206,55 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
 
         if (course === null) {
           console.log("\nempty", course, "\nobject");
-          return res.status(400).json({ success: false, message: "Course is not added yet to add schedule" });
-        }  
+          return res.status(400).json({
+            success: false,
+            message: "Course is not added yet to add schedule",
+          });
+        }
 
-    for (let i = 0; i < req.body.length; i++) {
-        
-            Schedule.create({
+        for (let i = 0; i < req.body.length; i++) {
+          Schedule.find(
+            {
+              date: req.body[i].date,
+            },
+            (err, schedule) => {
+              if (err) {
+                return res.status(500).json({ message: err });
+              }
+
+              if (typeof schedule !== "undefined" && schedule.length === 0) {
+                console.log("\n No Schedule Clash \n");
+              } else {
+                for (let j = 0; j < schedule.length; j++) {
+                  if (schedule !== null) {
+                    let classStartI = req.body[i].slotStart.replace(":", "");
+                    let classEndI = req.body[i].slotEnd.replace(":", "");
+
+                    let cSI = Number(classStartI);
+                    let cEI = Number(classEndI);
+
+                    let classStartE = schedule[j].slotStart.replace(":", "");
+                    let classEndE = schedule[j].slotEnd.replace(":", "");
+
+                    let cSE = Number(classStartE);
+                    let cEE = Number(classEndE);
+
+                    if (cSE < cEI && cEE > cSI) {
+                      return res.status(400).json({
+                        success: false,
+                        message: "Bad request! the schedule is clashing",
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          );
+        }
+
+        for (let i = 0; i < req.body.length; i++) {
+          Schedule.create(
+            {
               courseTitle: req.body[i].courseTitle,
               topic: req.body[i].topic,
               slotStart: req.body[i].slotStart,
@@ -228,62 +266,111 @@ exports.educatorBoardAddSchedule = (req, res, next) => {
             //   if (err) return handleError(err);
 
             //   console.log({ message: "schedule added successfully" });
-              
-            // }
-            )
-              .then(() => {
-                console.log({ message: "schedule added successfully" });
-              })
-              .catch((error) => {
-                console.error(error);
-                return res.status(500).send("Error: " + error);
-              });      
-    }
-    res.status(201).json({ message: "schedule added successfully" });
-  }
-  );
-  } else {
 
-    if (req.body.courseTitle == undefined) {
-      return res.status(400).json({ success: false, message: "Course title not defined" });
-    } 
-       Course.findOne(
-        {
-          title: req.body.courseTitle,
-        },
-        (err, course) => {
-          if (err) {
-           return res.status(500).json({ message: err });
-          }
-  
-          if (course === null) {
-            console.log("\nempty_single", course, "\nbody_object");
-            return res.status(400).json({ success: false, message: "Course is not added yet to add schedule" });
-          } 
-  
-        
-          Schedule.create({
-            courseTitle: req.body.courseTitle,
-            topic: req.body.topic,
-            slotStart: req.body.slotStart,
-            slotEnd: req.body.slotEnd,
-            date: req.body.date,
-            course: course._id,
-          })
+            // }
+          )
             .then(() => {
               console.log({ message: "schedule added successfully" });
-              res.status(201).json({ message: "schedule added successfully" });
             })
             .catch((error) => {
               console.error(error);
               return res.status(500).send("Error: " + error);
             });
-          }
-          );
-  
-          }
-};
+        }
+        res.status(201).json({ message: "schedule added successfully" });
+      }
+    );
+  } else {
+    if (req.body.courseTitle == undefined) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Course title not defined" });
+    }
 
+    let conflict = "initial";
+
+    Course.findOne(
+      {
+        title: req.body.courseTitle,
+      },
+      (err, course) => {
+        if (err) {
+          return res.status(500).json({ message: err });
+        }
+
+        if (course === null) {
+          console.log("\nempty", course, "\nobject");
+          return res.status(400).json({
+            success: false,
+            message: "Course is not added yet to add schedule",
+          });
+        }
+
+    Schedule.find(
+      {
+        date: req.body.date,
+        course: course._id,
+      },
+      (err, schedule) => {
+        if (err) {
+          return res.status(500).json({ message: err });
+        }
+
+        if (typeof schedule !== "undefined" && schedule.length === 0) {
+          console.log("\n No Schedule Clash \n");
+        } else {
+          for (let j = 0; j < schedule.length; j++) {
+            if (schedule !== null) {
+              let classStartI = req.body.slotStart.replace(":", "");
+              let classEndI = req.body.slotEnd.replace(":", "");
+
+              let cSI = Number(classStartI);
+              let cEI = Number(classEndI);
+
+              let classStartE = schedule[j].slotStart.replace(":", "");
+              let classEndE = schedule[j].slotEnd.replace(":", "");
+
+              let cSE = Number(classStartE);
+              let cEE = Number(classEndE);
+
+              if (cSE < cEI && cEE > cSI) {
+                conflict = "clash";
+              }
+            }
+          }
+
+          if (conflict === "clash") {
+            res.status(400).json({
+              success: false,
+              message: "Bad request! the schedule is clashing",
+            });
+          } else {
+            
+                Schedule.create({
+                  courseTitle: req.body.courseTitle,
+                  topic: req.body.topic,
+                  slotStart: req.body.slotStart,
+                  slotEnd: req.body.slotEnd,
+                  date: req.body.date,
+                  course: course._id,
+                })
+                  .then(() => {
+                    console.log({ message: "schedule added successfully" });
+                    res
+                      .status(201)
+                      .json({ message: "schedule added successfully" });
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    return res.status(500).send("Error: " + error);
+                  });
+              
+          }
+        }
+      });
+    });
+  }
+};
 
 exports.educatorBoardAddedCourses = (req, res, next) => {
   Course.find(
@@ -308,15 +395,16 @@ exports.educatorBoardAddedCourses = (req, res, next) => {
         courses.push(obj);
       }
 
-      if(typeof courses !== 'undefined' && courses.length === 0){
-      res.status(200).json({ success: true, message: "No courses added yet!" });
-      } else{
+      if (typeof courses !== "undefined" && courses.length === 0) {
+        res
+          .status(200)
+          .json({ success: true, message: "No courses added yet!" });
+      } else {
         res.status(200).json({ success: true, message: courses });
       }
     }
   );
 };
-
 
 exports.educatorBoardShowDemoVideos = (req, res, next) => {
   DemoVideo.find(
@@ -350,44 +438,36 @@ exports.educatorBoardShowDemoVideos = (req, res, next) => {
   );
 };
 
-
-
-
 exports.educatorBoardShowAddedCourseSchedule = (req, res, next) => {
-
   if (req.params.courseTitle == undefined) {
     return res.status(400).json({ success: false, message: "Bad Request" });
   }
-  Schedule.find({courseTitle: req.params.courseTitle})
-  .select("topic slotStart slotEnd date -_id")
-  .exec()
-  .then(schedule => {
+  Schedule.find({ courseTitle: req.params.courseTitle })
+    .select("topic slotStart slotEnd date -_id")
+    .exec()
+    .then((schedule) => {
+      console.log("\nschedule", schedule, "\nschedule");
 
-    console.log("\nschedule", schedule, "\nschedule");
+      if (typeof schedule !== "undefined" && schedule.length === 0) {
+        console.log("\nschedule", schedule, "\nschedule");
+        return res.status(404).json({ success: false, message: "Not Found" });
+      }
 
-        if (typeof schedule !== 'undefined' && schedule.length === 0) {
-          console.log("\nschedule", schedule, "\nschedule");
-          return res.status(404).json({ success: false, message: "Not Found" });
-        }
+      let schedules = [];
 
-        let schedules = [];
-  
-        for (let i = 0; i < schedule.length; i++) {
-
-              let obj = {
-                topic: schedule[i].topic,
-                slotStart: schedule[i].slotStart,
-                slotEnd: schedule[i].slotEnd,
-                date: schedule[i].date
-              };
-              schedules.push(obj);    
-                    
-        }
-        res.status(200).json({ success: true, message: schedules }); 
-})
-.catch(err => {
-  console.log(err);
-  res.status(500).json({ message: err });
-});
-
-}
+      for (let i = 0; i < schedule.length; i++) {
+        let obj = {
+          topic: schedule[i].topic,
+          slotStart: schedule[i].slotStart,
+          slotEnd: schedule[i].slotEnd,
+          date: schedule[i].date,
+        };
+        schedules.push(obj);
+      }
+      res.status(200).json({ success: true, message: schedules });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ message: err });
+    });
+};
