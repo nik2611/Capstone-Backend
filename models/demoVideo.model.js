@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const DemoVideo = mongoose.model("DemoVideo", new mongoose.Schema({
 
-    courseTitle: {type: String, required: true},
+    courseTitle: {type: String, required: true, lowercase: true, trim: true},
     videoUrl: {type: String, required: true},
     instrument: {type: String, required: true},
     course: {

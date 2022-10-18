@@ -20,7 +20,7 @@ const s3 = new aws.S3({
 });
 
 //Multer
-var upload = (fileType1, fileType2, fileSize) =>
+var upload = (fileType1, fileType2, fileSize, fileType3, fileType4) =>
   multer({
     storage: multerS3({
       s3,
@@ -36,7 +36,8 @@ var upload = (fileType1, fileType2, fileSize) =>
       fileSize: 1024 * 1024 * fileSize,
     },
     fileFilter: function (req, file, cb) {
-      if (file.mimetype === fileType1 || file.mimetype === fileType2) {
+      if (file.mimetype === fileType1 || file.mimetype === fileType2 || 
+        file.mimetype === fileType3 || file.mimetype === fileType4) {
         cb(null, true);
       } else {
         cb(null, false);
@@ -113,20 +114,20 @@ exports.educatorBoardDemoVideo = (req, res, next) => {
 };
 
 exports.educatorBoardAddCourse = (req, res, next) => {
-  
-  
-  
-  
-  
-  
-  
-  const uploadImage = upload("image/jpeg", "image/png", 5).single("image");
-  uploadImage(req, res, (err) => {
+     
+    
+  const uploadImageVideo = upload("image/jpeg", "image/png", 45, "video/mp4", "video/mpeg")
+  .fields([{name: "image", maxCount: 1}, {name: "video", maxCount: 1}]);
+
+  uploadImageVideo(req, res, (err) => {
     if (err) {
       return res.status(400).json({ success: false, message: err.message });
     }
 
-    if (req.file == undefined) {
+console.log(req.files);
+
+
+    if (!req.files.image) {
       return res
         .status(400)
         .json({
@@ -134,11 +135,23 @@ exports.educatorBoardAddCourse = (req, res, next) => {
           fileFormat: "jpeg/jpg/png only",
           fileSize: "filesize 5MB Max"
         });
-    }
+    } 
+
+
+    if (!req.files.video) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+            fileFormat: "mp4/mpeg only",
+          fileSize: "filesize 40MB Max"
+        });
+    } 
+
 
     Course.create({
-      videoUrl: videoLocation,
-      imageUrl: req.file.location,
+      videoUrl: req.files.video[0].location,
+      imageUrl: req.files.image[0].location,
       title: req.body.title,
       description: req.body.description,
       instrument: req.body.instrument,
@@ -148,10 +161,26 @@ exports.educatorBoardAddCourse = (req, res, next) => {
       classDays: req.body.classDays,
       educator: req.userId,
     })
-      .then(() => {
+      .then((course) => {
+
+        DemoVideo.create(
+          {
+            courseTitle: req.body.title,
+            videoUrl: req.files.video[0].location,
+            instrument: req.body.instrument,
+            course: course._id,
+            educator: req.userId,
+          },
+          function (err, demoVideo) {
+            if (err) return handleError(err);
+    
+            console.log("Demo video added successfully");
+          }
+        );
+
+        console.log("Course added successfully");
         res.status(201).json({
-          message: "course added successfully",
-          data: req.file.location,
+          message: "Course added successfully"
         });
       })
       .catch((error) => {
