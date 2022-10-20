@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 
 //Configuration
 var corsOptions = {
-  origin: "https://dreamlearn.vercel.app/"
+  origin: "https://dreamlearn.vercel.app"
 };
 
 dotenv.config();
